@@ -34,8 +34,9 @@
 
 ### Volume
 
-- **/flarum/app/public/assets** : Flarum assets directory
 - **/flarum/app/extensions** : Flarum extension directory
+- **/flarum/app/public/assets** : Flarum assets directory
+- **/flarum/app/storage/logs** : Flarum logs directory
 - **/etc/nginx/flarum** : Nginx location directory
 
 ### Environment variables
@@ -95,6 +96,7 @@ services:
     volumes:
       - /mnt/docker/flarum/assets:/flarum/app/public/assets
       - /mnt/docker/flarum/extensions:/flarum/app/extensions
+      - /mnt/docker/flarum/storage/logs:/flarum/app/storage/logs
       - /mnt/docker/flarum/nginx:/etc/nginx/flarum
     ports:
       - 80:8888
@@ -168,11 +170,12 @@ services:
     volumes:
       - /mnt/docker/flarum/assets:/flarum/app/public/assets
       - /mnt/docker/flarum/extensions:/flarum/app/extensions
+      - /mnt/docker/flarum/storage/logs:/flarum/app/storage/logs
       - /mnt/docker/flarum/nginx:/etc/nginx/flarum
 ```
 
-This example install php7-gmp php7-session and php7-brotli with apk  
-You can find a php extension here https://pkgs.alpinelinux.org/packages?name=php7-*&branch=v3.12&arch=x86_64
+This example install php8-gmp php8-session and php8-brotli with apk  
+You can find a php extension here https://pkgs.alpinelinux.org/packages?name=php8-*&branch=v3.13&arch=x86_64
 
 ### Install custom extensions
 
@@ -200,6 +203,16 @@ docker exec -ti flarum extension list
 
 File to change the vhost flarum `/etc/nginx/flarum/custom-vhost-flarum.conf`  
 To use file custom-vhost-flarum.conf add volume `/etc/nginx/flarum`
+Create file in `/mnt/docker/flarum/nginx/custom-vhost-flarum.conf`
+
+```nginx
+# Example of custom vhost flarum for nginx
+# fix nginx issue for fof/sitemap (https://github.com/FriendsOfFlarum/sitemap)
+
+location = /sitemap.xml {
+  try_files $uri $uri/ /index.php?$query_string;
+}
+```
 
 ### Custom composer repositories
 
